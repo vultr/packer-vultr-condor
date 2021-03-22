@@ -46,7 +46,7 @@ variable "k8_version" {
 
 variable "condor_image_version" {
   type    = string
-  default = "v1.0.0"
+  default = "v1.0.0-1"
 }
 
 variable "state_timeout" {
