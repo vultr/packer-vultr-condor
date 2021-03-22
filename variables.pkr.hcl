@@ -53,3 +53,8 @@ variable "state_timeout" {
   type    = string
   default = "10m"
 }
+
+variable "ssh_clear_authorized_keys" {
+  type    = bool
+  default = true
+}
