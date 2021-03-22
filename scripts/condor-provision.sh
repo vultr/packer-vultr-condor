@@ -4,6 +4,9 @@ set -euxo posix
 apt -y update
 apt -y install jq gnupg2
 
+INSTANCE_METADATA=$(curl --silent http://169.254.169.254/v1.json)
+PUBLIC_MAC=$(echo $INSTANCE_METADATA | jq -r '.interfaces[] | select(.["network-type"]=="public") | .mac')
+
 system_config(){
 	cat <<-EOF > /etc/modules-load.d/containerd.conf
 		overlay
@@ -19,6 +22,19 @@ system_config(){
 	modprobe overlay
 	modprobe br_netfilter
 	sysctl --system
+}
+
+network_config(){
+	cat <<-EOF > /etc/systemd/network/public.network
+		[Match]
+        Name=ens3
+
+		[Network]
+		DHCP=yes
+		EOF
+
+	systemctl enable systemd-networkd systemd-resolved
+	systemctl disable networking
 }
 
 install_containerd(){
@@ -55,10 +71,16 @@ zerodisk(){
     sync
 }
 
+condor_boot_service(){
+	systemctl enable condor-boot.service
+}
+
 main(){
 	system_config
+	network_config
 	install_containerd
 	install_k8
+	condor_boot_service
     zerodisk
 }
 

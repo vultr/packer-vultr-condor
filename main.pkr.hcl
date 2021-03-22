@@ -11,6 +11,16 @@ source "vultr" "debian_10" {
 build {
   sources = ["source.vultr.debian_10"]
 
+  provisioner "file" {
+    source      = "files/condor-boot.service"
+    destination = "/etc/systemd/system/condor-boot.service"
+  }
+
+  provisioner "file" {
+    source      = "files/condor-boot.sh"
+    destination = "/usr/local/bin/condor-boot.sh"
+  }
+
   provisioner "shell" {
     script = "scripts/condor-provision.sh"
     environment_vars = [
