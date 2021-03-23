@@ -1,0 +1,12 @@
+[Unit]
+Description=condor-boot
+After=systemd-networkd-wait-online.service
+Before=sshd.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/condor-boot.sh
+
+[Install]
+WantedBy=multi-user.target
